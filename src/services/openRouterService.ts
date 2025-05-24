@@ -5,23 +5,17 @@ const MODEL = "deepseek/deepseek-r1:free";
 
 export async function sendMessageToAI(message: string, previousMessages: Message[]) {
   try {
-    // Check for creator-related questions with more variations
+    // Check for creator-related questions
     const creatorQuestions = [
       'who created you',
       'who made you',
       'your creator',
       'who developed you',
-      'who built you',
-      'who designed you',
-      'who programmed you',
-      'who are you made by',
-      'who owns you',
-      'tell me about your creator',
-      'who is your developer'
+      'who built you'
     ];
 
     if (creatorQuestions.some(q => message.toLowerCase().includes(q))) {
-      return "I was created by Atharv Hatwar. I'm a stock market prediction AI assistant designed to help you analyze market trends and make informed investment decisions.";
+      return "I was created by Atharv Hatwar. I'm here to help you with stock market predictions and analysis.";
     }
 
     // Format previous messages for the OpenRouter API
@@ -30,21 +24,26 @@ export async function sendMessageToAI(message: string, previousMessages: Message
       content: msg.content
     }));
 
-    // Enhanced system message for better formatting and responses
+    // System message with proper formatting instructions
     formattedMessages.unshift({
       role: 'system',
-      content: `You are StockSage AI, a stock market prediction assistant created by Atharv Hatwar. 
-      Format your responses in clear, natural paragraphs without any markdown symbols or special formatting.
-      Use proper punctuation and spacing.
-      For numbers and percentages, use standard notation (e.g., "increased by 5.2%" instead of "+5.2%").
-      Keep responses concise and focused on stock market analysis.
-      When mentioning stock prices:
-      - Use ₹ symbol for Indian stocks
-      - Use $ symbol for US stocks
-      Always maintain a professional yet conversational tone.`
+      content: `You are StockSage AI, a friendly stock market prediction assistant.
+      Keep your responses simple and easy to understand.
+      Use everyday language and avoid technical jargon.
+      For Indian stocks, use ₹ symbol (e.g., ₹500).
+      For US stocks, use $ symbol (e.g., $50).
+      Be concise and focus on practical advice.
+      
+      For text formatting:
+      - Use **text** for bold text (it will be properly rendered)
+      - Use numbers with 2 decimal places for prices and percentages
+      - Format large numbers with appropriate commas
+      - Highlight important information in bold
+      
+      Example response format:
+      The stock price of **TCS** is ₹3,542.60, showing a change of **+1.23%** today.`
     });
 
-    // Add the current user message
     formattedMessages.push({
       role: 'user',
       content: message
@@ -67,13 +66,16 @@ export async function sendMessageToAI(message: string, previousMessages: Message
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('API Error:', errorData);
-      throw new Error(`API error: ${response.status}`);
+      throw new Error('Failed to get response from AI');
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    let content = data.choices[0].message.content;
+
+    // Convert markdown-style bold to HTML bold tags
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    return content;
   } catch (error) {
     console.error('Error in sendMessageToAI:', error);
     throw error;
