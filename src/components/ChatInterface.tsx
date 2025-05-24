@@ -7,7 +7,7 @@ const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm StockSage AI, your personal stock market prediction assistant. I can help you analyze stocks, predict market trends, and provide investment insights for both Indian and global markets. How can I assist you today?",
+      content: "Hi! I'm StockSage AI, your friendly stock market assistant. I can help you analyze stocks and predict market trends for both Indian and global markets. What would you like to know?",
       role: 'assistant',
       timestamp: new Date(),
     },
@@ -65,7 +65,7 @@ const ChatInterface: React.FC = () => {
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "I'm sorry, I encountered an error while processing your request. Please try again later.",
+        content: "Sorry, I couldn't process your request. Please try again.",
         role: 'assistant',
         timestamp: new Date(),
       };
@@ -88,8 +88,7 @@ const ChatInterface: React.FC = () => {
       "Predict RELIANCE stock for next week",
       "Should I invest in HDFC Bank?",
       "Compare TCS and Infosys",
-      "What's your outlook on NIFTY for next month?",
-      "Who created you?"
+      "What's your outlook on NIFTY for next month?"
     ];
 
     return (
@@ -115,7 +114,7 @@ const ChatInterface: React.FC = () => {
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 scroll-smooth">
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="max-w-3xl mx-auto space-y-4">
           {messages.map((message) => (
             <div key={message.id} className={`flex items-start space-x-3 fadeIn ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
               <div className={`flex-shrink-0 ${message.role === 'assistant' ? 'bg-indigo-600' : 'bg-gray-700'} rounded-full p-2 shadow-lg`}>
@@ -125,13 +124,13 @@ const ChatInterface: React.FC = () => {
                   <User size={18} className="text-white" />
                 )}
               </div>
-              <div className={`flex flex-col space-y-1 max-w-[85%] sm:max-w-[75%]`}>
+              <div className={`flex flex-col space-y-1 max-w-[90%] sm:max-w-[80%]`}>
                 <div className={`${
                   message.role === 'assistant' 
                     ? 'bg-gray-800 text-white' 
                     : 'bg-indigo-600 text-white'
-                } rounded-2xl px-4 py-3 shadow-lg transform transition-all duration-200`}>
-                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                } rounded-2xl px-4 py-3 shadow-lg`}>
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: message.content }}></p>
                 </div>
                 <span className="text-xs text-gray-500 self-end px-2">
                   {new Intl.DateTimeFormat('en-US', {
@@ -147,9 +146,9 @@ const ChatInterface: React.FC = () => {
               <div className="flex-shrink-0 bg-indigo-600 rounded-full p-2 shadow-lg">
                 <Bot size={18} className="text-white" />
               </div>
-              <div className="bg-gray-800 rounded-2xl px-4 py-3 flex items-center space-x-2 max-w-[85%] sm:max-w-[75%] shadow-lg">
+              <div className="bg-gray-800 rounded-2xl px-4 py-3 flex items-center space-x-2 max-w-[90%] sm:max-w-[80%] shadow-lg">
                 <div className="dot-typing"></div>
-                <span className="text-gray-400">StockSage is thinking...</span>
+                <span className="text-gray-400">Thinking...</span>
               </div>
             </div>
           )}
